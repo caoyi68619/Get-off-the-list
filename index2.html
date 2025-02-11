@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>九宫格抽奖</title>
+    <style>
+        .game {
+            width: 100%;
+            height: 320px;
+            text-align: center;
+            margin-top: 0 auto;
+        }
+
+        .turntable {
+            width: 310px;
+            height: 320px;
+            margin-top: 0 auto;
+        }
+
+        .gift {
+            width: 100px;
+            height: 100px;
+            border: 1px solid yellowgreen;
+            float: left;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 100px;
+            background-color: azure;
+            color: cadetblue;
+        }
+
+        .gift:nth-child(5) {
+            background-color: transparent;
+        }
+
+        .start {
+            width: 80%;
+            display: inline-block;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            vertical-align: middle;
+            color: rgb(255, 255, 255);
+            background-color: rgb(233, 104, 107);
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 6px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+            font-family: 微软雅黑;
+            border-width: initial;
+            border-style: none;
+            border-color: initial;
+            border-image: initial;
+            outline: 0px;
+            padding: 8px 18px;
+            overflow: hidden;
+            text-decoration: none;
+            transition: all 0.2s ease-out 0s;
+            border-radius: 2px;
+        }
+
+        .selected {
+            border: 1px solid transparent;
+            box-shadow: 0 0 5px 2px red;
+            position: relative;
+            background-color: antiquewhite;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div id="lottery-container" class="lottery-container">
+        <div class="lottery-item" data-prize="奖品1">1</div>
+        <div class="lottery-item" data-prize="奖品2">2</div>
+        <div class="lottery-item" data-prize="奖品3">3</div>
+        <div class="lottery-item" data-prize="奖品4">4</div>
+        <div class="lottery-item" data-prize="奖品5">5</div>
+        <div class="lottery-item" data-prize="奖品6">6</div>
+        <div class="lottery-item" data-prize="奖品7">7</div>
+        <div class="lottery-item" data-prize="奖品8">8</div>
+        <div class="lottery-item" id="start-btn">开始</div>
+    </div> -->
+    <div class="game">
+        <div class="turntable" style="position: absolute;left: 50%;transform:translateX(-50%)">
+            <div class="gift" data-prize="表情包">表情包</div>
+            <div class="gift" data-prize="其他">其他</div>
+            <div class="gift" data-prize="滚你妈的">滚你妈的</div>
+            <div class="gift" data-prize="去你妈的">去你妈的</div>
+            <div class="gift"></div>
+            <div class="gift" data-prize="好呀宝宝">好呀宝宝</div>
+            <div class="gift" data-prize="你也配？">你也配？</div>
+            <div class="gift" data-prize="宝宝你是……">宝宝你是……</div>
+            <div class="gift" data-prize="下次吧">下次吧</div>
+            <div id="start-btn"><button type="button" class="start">开始脱单</button></div>
+            <div>🎉❤情人节前脱单攻略❤🎉
+
+                点击群友头像👆🏻
+                编辑发送“咱俩试试？”💌
+                即有机会获得"“滚你妈的”💕or“好呀宝宝”💕
+
+                ⭕兑奖日期:2025年2月14日之前</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const startBtn = document.getElementById('start-btn');
+            const items = document.querySelectorAll('.gift');
+            let timer = null;
+            let speed = 100;
+            let times = 0;
+            let cycle = 50; // 抽奖动画循环次数
+            let prizeIndex = 0; // 中奖索引
+
+            // 概率设置，这里假设每个奖品的中奖概率
+            const probability = {
+                '表情包': 0.25,
+                '其他': 0.14,
+                '滚你妈的': 0.15,
+                '去你妈的': 0.15,
+                '好呀宝宝': 0.01,
+                '你也配？': 0.15,
+                '宝宝你是……': 0.10,
+                '下次吧': 0.5
+            };
+
+            // 计算中奖索引
+            function getPrizeIndex() {
+                let randomNum = Math.random();
+                let sum = 0;
+                for (let key in probability) {
+                    sum += probability[key];
+                    if (randomNum <= sum) {
+                        prizeIndex = [...items].findIndex(item => item.dataset.prize === key);
+                        return;
+                    }
+                }
+            }
+
+            // 开始抽奖
+            startBtn.addEventListener('click', function () {
+                getPrizeIndex();
+                if (timer) return;
+                timer = setInterval(function () {
+                    times += 1;
+                    let index = times % 8;
+                    for (let i = 0; i < items.length; i++) {
+                        items[i].classList.remove('selected');
+                    }
+                    items[index].classList.add('selected');
+
+                    if (times > cycle + 8 && index === prizeIndex) {
+                        clearInterval(timer);
+                        timer = null;
+                        alert(`恭喜你获得了${items[prizeIndex].dataset.prize}`);
+                        times = 0;
+                    }
+                }, speed);
+            });
+        });
+    </script>
+</body>
+
+</html>
