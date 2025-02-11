@@ -73,15 +73,15 @@
 <body>
     <div class="game">
         <div class="turntable" style="position: absolute;left: 50%;transform:translateX(-50%)">
-            <div class="gift">表情包</div>
-            <div class="gift">其他</div>
-            <div class="gift">滚你妈的</div>
-            <div class="gift">去你妈的</div>
+            <div class="gift" data-prize="表情包">表情包</div>
+            <div class="gift" data-prize="其他">其他</div>
+            <div class="gift" data-prize="滚你妈的">滚你妈的</div>
+            <div class="gift" data-prize="去你妈的">去你妈的</div>
             <div class="gift"></div>
-            <div class="gift">好呀宝宝</div>
-            <div class="gift">你也配？</div>
-            <div class="gift">宝宝你是……</div>
-            <div class="gift">下次吧</div> <button type="button" class="start" onclick="start()">开始脱单</button>
+            <div class="gift" data-prize="好呀宝宝">好呀宝宝</div>
+            <div class="gift" data-prize="你也配？">你也配？</div>
+            <div class="gift" data-prize="宝宝你是……">宝宝你是……</div>
+            <div class="gift" data-prize="下次吧">下次吧</div> <button type="button" class="start" onclick="start()">开始脱单</button>
             <div>🎉❤情人节前脱单攻略❤🎉
 
                 点击群友头像👆🏻
@@ -97,22 +97,40 @@
         var gift;
         var x = 0; //可修改ArrList以定义每一奖项中奖概率; 
         var ArrList = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35];
+
+        var prizeList = [
+            { name: '表情包', probability: 0.25 }, // 1%的概率
+            { name: '其他', probability: 0.14, }, // 5%的概率
+            { name: '滚你妈的', probability: 0.15, }, // 10%的概率
+            { name: '去你妈的', probability: 0.15, }, // 20%的概率
+            { name: '好呀宝宝', probability: 0.01, },  // 64%的概率
+            { name: '你也配？', probability: 0.15, },  // 64%的概率
+            { name: '宝宝你是……', probability: 0.10, },  // 64%的概率
+            { name: '下次吧', probability: 0.5 }  // 64%的概率
+        ];
         var position = [0, 1, 2, 5, 8, 7, 6, 3];//position用于定位每一个抽奖格; 
         var money = [1.88, 5.20, 6.66, 8.88, 13.14, 66.66, 88.88, 99.99, 100];
         function start() {
             var initial = getArrayItems(ArrList, 1);
-            console.error(initial,'initialinitialinitial')
+            console.error(initial, 'initialinitialinitial')
             for (var i = 0; i < initial; i++) {
                 setTimeout(() => {
                     $('.gift').removeClass("selected");
                     gift = $('.gift:eq(' + position[(x % 8)] + ')');
-                    gift.addClass('selected'); x++;
+                    console.error(gift,'gift')
+                    gift.addClass('selected');
+                    x++;
+                    console.error(x, 'xxxxxxxxxxxxxxxxxxxxxxxxx')
                     if (x == initial) {
+                 
                         setTimeout(() => {
                             if (position[(x % 8)] == 2) {
                                 randmoney();
                             } else {
-                                alert('恭喜获得礼物：' + gift.text());
+                                var result = lottery(prizeList);
+                                // document.getElementById('result').innerText = '恭喜你，你抽中了：' + result;
+                                // alert('恭喜获得礼物：' + gift.text());
+                                alert('恭喜获得礼物：' + result);
                             }
                             console.log(position[(x % 8)]); x = 0;
                         }, 10)
@@ -132,6 +150,24 @@
                     }
                 }, i * 100);
             };
+        }
+
+        function lottery(prizeList) {
+            var randomNum = Math.random();
+            console.error(randomNum,'randomNum')
+            var probabilityAccumulation = 0;
+
+            for (var i = 0; i < prizeList.length; i++) {
+                $('.gift').removeClass("selected");
+                    gift = $('.gift:eq(' + position[(x % 8)] + ')');
+                    gift.addClass('selected');
+                    x++;
+                probabilityAccumulation += prizeList[i].probability;
+                console.error(probabilityAccumulation,'probabilityAccumulationprobabilityAccumulation')
+                if (randomNum < probabilityAccumulation) {
+                    return prizeList[i].name;
+                }
+            }
         } function getArrayItems(arr, num) {
             //新建一个数组,将传入的数组复制过来,用于运算,而不要直接操作传入的数组; 
             var temp_array = new Array(); for (var index in arr) { temp_array.push(arr[index]); }
